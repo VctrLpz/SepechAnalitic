@@ -1,37 +1,41 @@
+// tomamos las entradas de los elementos 
 const start = document.getElementById('start');
 const stop = document.getElementById('stop');
 const texto = document.getElementById('texto');
 
+// creamos un nuevo speecrecognition
 let recognition = new webkitSpeechRecognition();
 recognition.lang = 'es-MX';
 recognition.continuous = true;
 recognition.interimResults = false;
+//obtememos los reslultados 
 recognition.onresult = (event) =>{
     const results = event.results;
     const frase = results[results.length - 1][0].transcript;
     texto.value += frase;
-    txt(frase);
+    
 }
-function txt (frase){
-    const guardarArchivoDeTexto = (contenido, nombre) => {
+// Para salvar el resultado en un txt 
+    const guardarArchivoDeTexto = (contenido) => {
         const a = document.createElement("a");
-        const archivo = new Blob([contenido], { type: 'text/plain' });
-        const url = URL.createObjectURL(archivo);
-        a.href = url;
-        a.download = nombre;
+        const archivo = new Blob([contenido], { type: 'text/json' });
+        a.href = URL.createObjectURL(archivo);
+        a.download = "muestra.txt";
         a.click();
         URL.revokeObjectURL(url);
     }
-    const $botonDescargar = document.querySelector("#save");
-    $botonDescargar.onclick = () => {
-        guardarArchivoDeTexto(frase);
+    stop.onclick = () => {
+        guardarArchivoDeTexto(texto.value);
+        
     }
-}
 
+//iniciamos el reconocimiento 
 start.addEventListener('click' , () =>{
     recognition.start();
 })
+//Detenemos el reconocimiento 
 stop.addEventListener('click' , () =>{
     recognition.stop();
+    texto.value = "";
 })
 
